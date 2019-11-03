@@ -1,0 +1,2 @@
+# wanikani
+WaniKani userscripts
