@@ -10,29 +10,37 @@
 
 (function() {
   'use strict';
+  var haveInfo = function()   { return $('#item-info h2').is(':visible') }
+  var waitInfo = function(cb) { haveInfo() ? cb() : setTimeout(function() { waitInfo(cb) }, 100) }
+  var withInfo = function(cb) { haveInfo() ? cb() : ($('#option-item-info').trigger('click'), waitInfo(cb)) }
+  var focusInputIn = function(selector) { var input = $(selector + ' textarea')[0] || $(selector + ' input')[0]; input.focus(); }
+  var editNote = function(selector, buttonSelector) {
+    buttonSelector = buttonSelector || selector;
+    withInfo(function() {
+      if ($(selector).is(':visible')) {
+        $(buttonSelector).trigger('click');
+        setTimeout(function() { focusInputIn(selector) }, 50);
+      } else {
+        $('#all-info').trigger('click');
+        setTimeout(function() { editNote(selector, buttonSelector) }, 1);
+      }
+    });
+  }
+  var addSynonym = function() { editNote('.user-synonyms', '.user-synonyms-add-btn'); }
+
   $(document).on('keydown.reviewScreen', function(e) {
     // Don't fire hotkeys until the review UI is visible.
     if (!$('#reviews').is(':visible')) return;
 
     // The main hotkeys.
     if (!$('input, textarea').is(':focus')) {
-      if (e.key === '?') {
-        $('#hotkeys').trigger('click');
-        e.preventDefault();
-      } else if (e.key.toLowerCase() === 'w') {
-        $('#option-wrap-up').trigger('click');
-        e.preventDefault();
-      } else if (e.key.toLowerCase() === 's' && $('section.user-synonyms').is(':visible')) {
-        $('.user-synonyms-add-btn').trigger('click');
-        e.preventDefault();
-      } else if (e.key.toLowerCase() === 'm' && $('div.note-meaning').is(':visible')) {
-        $('div.note-meaning').trigger('click');
-        $('div.note-meaning textarea').focus();
-        e.preventDefault();
-      } else if (e.key.toLowerCase() === 'r' && $('div.note-reading').is(':visible')) {
-        $('div.note-reading').trigger('click');
-        $('div.note-reading textarea').focus();
-        e.preventDefault();
+      switch (e.key.toLowerCase()) {
+        case '?': $('#hotkeys').click();        e.preventDefault(); break;
+        case 'w': $('#option-wrap-up').click(); e.preventDefault(); break;
+        case 's': addSynonym();                 e.preventDefault(); break;
+        case 'm': editNote('div.note-meaning'); e.preventDefault(); break;
+        case 'r': editNote('div.note-reading'); e.preventDefault(); break;
+        default: break;
       }
     }
 
@@ -57,6 +65,9 @@
         e.preventDefault();
       } else if ($('.user-synonyms ul li.user-synonyms-add-form form input').is(':focus')) {
         $('.user-synonyms ul li.user-synonyms-add-form form button[type=button]').trigger('click');
+        e.preventDefault();
+      } else if ($('#hotkeys>table').is(':visible')) {
+        $('#hotkeys').trigger('click');
         e.preventDefault();
       }
     }
