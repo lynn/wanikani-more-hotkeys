@@ -2,7 +2,7 @@
 // @name          WaniKani More Hotkeys
 // @namespace     https://www.wanikani.com
 // @description   In kanji info, press 'S/M/R' to add synonym/meaning/reading note. Press 'W' to wrap up.
-// @version       1.0.0
+// @version       1.1.0
 // @include       *://www.wanikani.com/lesson/session*
 // @include       *://www.wanikani.com/review/session*
 // @grant         none
