@@ -1,6 +1,6 @@
 # WaniKani More Hotkeys
 
-Adds hotkeys for “wrap up” (**W**), “add synonym” (**S**), “edit meaning note” (**M**), “edit reading note” (**R**)… 
+Adds hotkeys for “wrap up” (**Shift+W**), “add synonym” (**S**), “edit meaning note” (**M**), “edit reading note” (**R**)… 
 
 See [here](https://community.wanikani.com/t/userscript-wanikani-more-hotkeys/39979) for documentation.
 
