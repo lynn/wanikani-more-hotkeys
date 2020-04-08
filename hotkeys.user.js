@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name          WaniKani More Hotkeys
 // @namespace     https://www.wanikani.com
-// @description   Press 'S/M/R' to add a synonym/meaning/reading note, and 'W' to wrap up. Try '?' for more hotkey info.
-// @version       1.3.0
+// @description   Press 'S/M/R' to add a synonym/meaning/reading note, and 'Shift+W' to wrap up. Try '?' for more hotkey info.
+// @version       1.4.0
 // @include       *://www.wanikani.com/lesson/session*
 // @include       *://www.wanikani.com/review/session*
 // @grant         none
@@ -20,6 +20,8 @@
   var clickShowAllInfo = () => $('#all-info').trigger('click');
   var canClickAudioButton = () => !$('#option-audio').is('.disabled');
   var clickAudioButton = () => $('#option-audio').trigger('click');
+  var hasLightningMode = () => $('#lightning-mode').length > 0;
+  var toggleLightningMode = () => $('#lightning-mode').trigger('click');
 
   // Expand flashcard info until `selector` is visible, then call `cb`.
   var withInfo_Review = function(selector, cb, _clicked) {
@@ -81,9 +83,8 @@
   $(document).on('keydown.moreHotkeys', (e) => {
     // The main hotkeys.
     var shift = e.shiftKey;
-    if (!$('input, textarea').is(':focus')) {
+    if (e.key === 'W' || !$('input, textarea').is(':focus')) {
       switch (e.key.toLowerCase()) {
-        case '?': toggleHotkeys();   e.preventDefault(); break;
         case 'w': wrapUp();          e.preventDefault(); break;
         case 's': addSynonym();      e.preventDefault(); break;
         case 'm': editMeaning();     e.preventDefault(); break;
@@ -92,6 +93,9 @@
         default: break;
       }
     }
+
+    if (e.key === '?') { toggleHotkeys(); e.preventDefault(); }
+    if (e.key === '\\' && hasLightningMode()) { toggleLightningMode(); e.preventDefault(); }
 
     // Bonus: accept Ctrl+Enter in meaning/reading note editor.
     if ((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
@@ -131,17 +135,18 @@
   });
 
   // Update hotkey list.
-  $(document).ready(function() {
+  $(document).ready(() => setTimeout(function() {
     $('#hotkeys>table>tbody:last').after(
       '<tbody style="color:purple;">' +
       ' <tr><td colspan="2"><hr></td></tr>' +
       ' <tr><td><span>S</span></td><td>Add Synonym</td></tr>' +
       ' <tr><td><span>M</span></td><td>Add Meaning Note</td></tr>' +
       ' <tr><td><span>R</span></td><td>Add Reading Note</td></tr>' +
-      ' <tr><td><span>W</span></td><td>Wrap Up</td></tr>' +
+      ' <tr><td><span>Shift+W</span></td><td>Wrap Up</td></tr>' +
       ' <tr><td><span>Shift+J</span></td><td>Other Audio</td></tr>' +
+      (hasLightningMode() ? ' <tr><td><span>\\</span></td><td>Lightning Mode</td></tr>' : '') +
       ' <tr><td><span>?</span></td><td>Show Hotkeys</td></tr>' +
       '</tbody>'
     );
-  });
+  }, 500));
 })();
